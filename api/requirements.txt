@@ -1,5 +1,2 @@
 # Minimal requirements for Vercel serverless
-fastapi>=0.104.0
-google-generativeai>=0.3.0
-python-dotenv>=1.0.0
-Pillow>=10.0.0
+# Using built-in http.server - no external dependencies needed
