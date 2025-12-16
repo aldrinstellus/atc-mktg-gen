@@ -1,0 +1,37 @@
+# Docker Compose for local development
+# Runs both FastAPI backend and Streamlit frontend
+
+version: '3.8'
+
+services:
+  # FastAPI Backend
+  api:
+    build: .
+    container_name: atc-mktg-api
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_DRIVE_ROOT_FOLDER_ID=${GOOGLE_DRIVE_ROOT_FOLDER_ID}
+      - APP_ENV=development
+    volumes:
+      - ./src:/app/src
+      - ./generated:/app/generated
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Streamlit Frontend
+  ui:
+    build: .
+    container_name: atc-mktg-ui
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8000
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - api
+    command: streamlit run src/ui/app.py --server.port 8501 --server.address 0.0.0.0
+
+volumes:
+  generated:
