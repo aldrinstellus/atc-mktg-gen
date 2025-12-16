@@ -57,3 +57,4 @@ generated/
 
 # Debug files
 *.bin
+.vercel

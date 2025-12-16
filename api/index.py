@@ -1,13 +1,34 @@
 """
 Vercel serverless function wrapper for FastAPI app.
 """
-import sys
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 import os
 
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+app = FastAPI(
+    title="ATC Marketing Asset Generator",
+    description="AI-powered marketing asset generation API",
+    version="1.0.0"
+)
 
-from src.api.main import app
+@app.get("/")
+async def root():
+    """Health check endpoint."""
+    return {
+        "status": "healthy",
+        "app": "ATC Marketing Asset Generator",
+        "version": "1.0.0",
+        "deployment": "vercel"
+    }
 
-# Vercel expects 'app' or 'handler' to be exposed
+@app.get("/api/health")
+async def health():
+    """Health check for API."""
+    api_key = os.getenv("GOOGLE_API_KEY", "")
+    return {
+        "status": "ok",
+        "api_key_configured": bool(api_key and len(api_key) > 10)
+    }
+
+# Vercel handler
 handler = app
